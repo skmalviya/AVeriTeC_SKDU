@@ -35,5 +35,5 @@ bash script/scraper.sh <split> <start_idx> <end_idx>
 ### Rank the sentences in the knowledge store with BM25
 See [bm25_sentenes.py](https://huggingface.co/chenxwh/AVeriTeC/tree/main/src/reranking/bm25_sentenes.py) for more args
 ```
- python -m src.reranking.bm25_sentenes
+python -m src.reranking.bm25_sentenes
 ```
