@@ -27,7 +27,7 @@ def scrape_text_from_url(url, temp_name):
 
     if (
         response is None or response.status_code == 503
-    ):  # trafilatura does not handle retry with 503, often waiting 24hours as overwriten by the html
+    ):  # trafilatura does not handle retry with 503, often waiting 24 hours as overwritten by the html
         return []
 
     if url.endswith(".pdf"):
@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 lines_skipped = len(existing_data)
                 print(f"    Skipping {lines_skipped} lines in {json_output_path}")
 
-    # Some tsv files will fail to be laoded, try all 4 different libs to to load them
+    # Some tsv files will fail to be loaded, try different libs to to load them
     try:
         df = pd.read_csv(args.tsv_input_file, sep="\t", header=None)
         data = df.values
@@ -107,7 +107,6 @@ if __name__ == "__main__":
             print("Data loaded successfully with NumPy.")
         except Exception as e:
             print("Error loading with NumPy:", e)
-            # If NumPy loading fails, attempt to load with Pandas
             try:
                 data = []
                 with open(args.tsv_input_file, "r", newline="") as tsvfile:

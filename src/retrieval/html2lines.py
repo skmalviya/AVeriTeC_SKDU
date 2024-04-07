@@ -18,7 +18,6 @@ def get_page(url):
     page = None
     for _ in range(3):
         try:
-            # for website that is "maintaining", trafilatura "respect the retry of the html" and waits for 24 hours
             page = trafilatura.fetch_url(url, config=DEFAULT_CONFIG)
             assert page is not None
             print("Fetched " + url, file=sys.stderr)
@@ -59,7 +58,7 @@ def line_correction(lines, max_size=100):
 
             if (
                 len(stack) > MIN_CHAR
-            ):  # Enusre every lines in the out_lines suffice the MIN_CHAR restriction
+            ):  # Ensure every lines in the out_lines suffice the MIN_CHAR restriction
                 out_lines.append(stack)
         else:
             out_lines.append(line)

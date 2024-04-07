@@ -8,7 +8,6 @@ from rank_bm25 import BM25Okapi
 
 
 def combine_all_sentences(knowledge_file):
-    # Get all the unique sentences from the scraped urks for this claim
     sentences, urls = [], []
 
     with open(knowledge_file, "r", encoding="utf-8") as json_file:
@@ -31,7 +30,7 @@ def retrieve_top_k_sentences(query, document, urls, top_k):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Get top 100 sentences for sentences in the knowlede store"
+        description="Get top 100 sentences for sentences in the knowledge store"
     )
     parser.add_argument(
         "-k",
@@ -96,7 +95,7 @@ if __name__ == "__main__":
                 )
 
                 print(
-                    f"Obtained {len(document_in_sentences)} sentenes from {num_urls_this_claim} urls."
+                    f"Obtained {len(document_in_sentences)} sentences from {num_urls_this_claim} urls."
                 )
 
                 # Retrieve top_k sentences with bm25

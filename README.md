@@ -32,8 +32,14 @@ bash script/scraper.sh <split> <start_idx> <end_idx>
 # e.g., bash script/scraper.sh dev 0 500
 ```
 
-### Rank the sentences in the knowledge store with BM25
-See [bm25_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/bm25_sentences.py) for more args
+### Rank the sentences in the knowledge store with BM25, keep top 100 sentences for each claim
+See [bm25_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/bm25_sentences.py) for more argument options.
 ```
 python -m src.reranking.bm25_sentences
+```
+
+### Generate questions for each evidence sentence
+We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate questions for each evidence sentence using the closet examples from the training set. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options.
+```
+python -m retrieval_reranking.question_generation_top_sentences
 ```
