@@ -21,7 +21,7 @@ python -m nltk.downloader wordnet
 conda install pytorch pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 
-### Scrape text from the URLs obtained by searching queries with the Google API.
+### Scrape text from the URLs obtained by searching queries with the Google API
 
 We provide up to 1000 URLs for each claim returned from a Google API search using different queries. This is a courtesy aimed at reducing the cost of using the Google Search API for participants of the shared task. The URL files can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/urls).
 
