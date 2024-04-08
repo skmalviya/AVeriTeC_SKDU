@@ -99,7 +99,7 @@ python -m src.reranking.question_generation_top_sentences
 ```
 
 ### 4. Rerank the QA pairs
-Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt) we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
+Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt), we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
 ```bash
 ```
 
