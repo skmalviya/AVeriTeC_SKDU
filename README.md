@@ -51,6 +51,17 @@ Below are the steps to reproduce the baseline results. The main difference from 
 
 ### 0. Set up environment
 
+You will need to have [Git LFS](https://git-lfs.com/) installed:
+```bash
+git lfs install
+git clone https://huggingface.co/chenxwh/AVeriTeC
+```
+You can also skip the large files in the repo and selectively download them later:
+```bash
+GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/chenxwh/AVeriTeC
+```
+Then create `conda` environment and install the libs.
+
 ```bash
 conda create -n averitec python=3.11
 conda activate averitec
