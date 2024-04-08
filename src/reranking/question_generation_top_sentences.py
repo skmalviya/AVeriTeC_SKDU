@@ -98,7 +98,7 @@ if __name__ == "__main__":
         offload_folder="./offload",
     )
 
-    with open(args.output_questions, "a", encoding="utf-8") as output_file:
+    with open(args.output_questions, "w", encoding="utf-8") as output_file:
         with open(args.top_k_target_knowledge, "r", encoding="utf-8") as json_file:
             for i, line in enumerate(json_file):
                 data = json.loads(line)

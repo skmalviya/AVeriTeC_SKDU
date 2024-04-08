@@ -7,10 +7,51 @@ license: apache-2.0
 
 Data, knowledge store and source code to reproduce the baseline experiments for the [AVeriTeC](https://arxiv.org/abs/2305.13117) dataset, which will be used for the 7th [FEVER](https://fever.ai/) workshop co-hosted at EMNLP 2024.
 
-
-### Set up environment
-
+## Dataset
+The training and dev dataset can be found under [data](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data). Test data will be released at a later date. Each claim follows the following structure:
+```json
+{
+    "claim": "The claim text itself",
+    "required_reannotation": "True or False. Denotes that the claim received a second round of QG-QA and quality control annotation.",
+    "label": "The annotated verdict for the claim",
+    "justification": "A textual justification explaining how the verdict was reached from the question-answer pairs.",
+    "claim_date": "Our best estimate for the date the claim first appeared",
+    "speaker": "The person or organization that made the claim, e.g. Barrack Obama, The Onion.",
+    "original_claim_url": "If the claim first appeared on the internet, a url to the original location",
+    "cached_original_claim_url": "Where possible, an archive.org link to the original claim url",
+    "fact_checking_article": "The fact-checking article we extracted the claim from",
+    "reporting_source": "The website or organization that first published the claim, e.g. Facebook, CNN.",
+    "location_ISO_code": "The location most relevant for the claim. Highly useful for search.",
+    "claim_types": [
+            "The types of the claim",
+    ],
+    "fact_checking_strategies": [
+        "The strategies employed in the fact-checking article",
+    ],
+    "questions": [
+        {
+            "question": "A fact-checking question for the claim",
+            "answers": [
+                {
+                    "answer": "The answer to the question",
+                    "answer_type": "Whether the answer was abstractive, extractive, boolean, or unanswerable",
+                    "source_url": "The source url for the answer",
+                    "cached_source_url": "An archive.org link for the source url"
+                    "source_medium": "The medium the answer appeared in, e.g. web text, a pdf, or an image.",
+                }
+            ]
+        },
+}
 ```
+
+## Reproduce the baseline 
+
+Below are the steps to reproduce the baseline results. The main difference from the reported results in the paper is that, instead of requiring direct access to the paid Google Search API, we provide such search results for up to 1000 URLs per claim using different queries, and the scraped text as a knowledge store for retrieval for each claim. This is aimed at reducing the overhead cost of participating in the Shared Task.
+
+
+### 0. Set up environment
+
+```bash
 conda create -n averitec python=3.11
 conda activate averitec
 
@@ -21,25 +62,56 @@ python -m nltk.downloader wordnet
 conda install pytorch pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 
-### Scrape text from the URLs obtained by searching queries with the Google API
+### 1. Scrape text from the URLs obtained by searching queries with the Google API
 
-We provide up to 1000 URLs for each claim returned from a Google API search using different queries. This is a courtesy aimed at reducing the cost of using the Google Search API for participants of the shared task. The URL files can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/urls).
+The URLs of the search results and queries used for each claim can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/urls).
 
-You can use your own scraping tool to extract sentences from the URLs. Alternatively, we have included a scraping tool for this purpose, which can be executed as follows. The processed files are also provided and can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/knowledge_store).
+ Next, we scrape the text from the URLs and parse the text to sentences. The processed files are also provided and can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/knowledge_store). You can use your own scraping tool to extract sentences from the URLs.
 
-```
+```bash
 bash script/scraper.sh <split> <start_idx> <end_idx> 
 # e.g., bash script/scraper.sh dev 0 500
 ```
 
-### Rank the sentences in the knowledge store with BM25, keep top 100 sentences for each claim
-See [bm25_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/bm25_sentences.py) for more argument options.
-```
+### 2. Rank the sentences in the knowledge store with BM25
+Then, we rank the scraped sentences for each claim using BM25 (based on the similarity to the claim), keeping the top 100 sentences per claim.
+See [bm25_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/bm25_sentences.py) for more argument options. We provide the output file for this step on the dev set [here]().
+```bash
 python -m src.reranking.bm25_sentences
 ```
 
-### Generate questions for each evidence sentence
-We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate questions for each evidence sentence using the closet examples from the training set. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options.
-```
+### 3. Generate questions-answer pair for the top sentences
+We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate QA paris for each of the top 100 sentence, providing 10 closest claim-QA-pairs from the training set as in-context examples. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options. We provide the output file for this step on the dev set [here]().
+```bash
 python -m src.reranking.question_generation_top_sentences
+```
+
+### 4. Rerank the QA pairs
+Using [a pre-trained BERT model](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt) we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
+```bash
+```
+
+
+### 5. Veracity prediction
+Finally, given a claim and its 3 QA pairs as evidence, we use [another pre-trained BERT model](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. The pre-trained model is provided . We provide the prediction file for this step on the dev set [here]().
+```bash
+```
+The results will be presented as follows:
+```bash
+```
+
+We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. The result for dev and the test set below.
+
+
+
+## Citation
+If you find AVeriTeC useful for your research and applications, please cite us using this BibTeX:
+```bibtex
+@article{schlichtkrull2024averitec,
+  title={Averitec: A dataset for real-world claim verification with evidence from the web},
+  author={Schlichtkrull, Michael and Guo, Zhijiang and Vlachos, Andreas},
+  journal={Advances in Neural Information Processing Systems},
+  volume={36},
+  year={2024}
+}
 ```
