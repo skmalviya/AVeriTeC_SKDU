@@ -41,6 +41,7 @@ The training and dev dataset can be found under [data](https://huggingface.co/ch
                 }
             ]
         },
+    ]
 }
 ```
 
@@ -98,13 +99,13 @@ python -m src.reranking.question_generation_top_sentences
 ```
 
 ### 4. Rerank the QA pairs
-Using [a pre-trained BERT model](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt) we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
+Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt) we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
 ```bash
 ```
 
 
 ### 5. Veracity prediction
-Finally, given a claim and its 3 QA pairs as evidence, we use [another pre-trained BERT model](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. The pre-trained model is provided . We provide the prediction file for this step on the dev set [here]().
+Finally, given a claim and its 3 QA pairs as evidence, we use another pre-trained BERT model [bert_veracity.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. The pre-trained model is provided . We provide the prediction file for this step on the dev set [here]().
 ```bash
 ```
 The results will be presented as follows:
