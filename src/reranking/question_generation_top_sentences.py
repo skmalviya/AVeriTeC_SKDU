@@ -58,13 +58,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i",
         "--top_k_target_knowledge",
-        default="data_store/dev_top_k.json",
+        default="data_store/dev_top_k_sentences.json",
         help="Directory where the sentences for the scraped data is saved.",
     )
     parser.add_argument(
         "-o",
         "--output_questions",
-        default="data_store/dev_bm25_questions.json",
+        default="data_store/dev_top_k_qa.json",
         help="Directory where the sentences for the scraped data is saved.",
     )
     parser.add_argument(
