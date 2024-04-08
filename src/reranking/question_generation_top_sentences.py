@@ -113,16 +113,12 @@ if __name__ == "__main__":
                     prompt_lookup_str = sentences_urls["sentence"]
                     url = sentences_urls["url"]
 
-                    st = time.time()
                     prompt_s = prompt_bm25.get_scores(
                         nltk.word_tokenize(prompt_lookup_str)
                     )
                     prompt_n = 10
                     prompt_top_n = np.argsort(prompt_s)[::-1][:prompt_n]
                     prompt_docs = [prompt_corpus[i] for i in prompt_top_n]
-                    print(
-                        f"Got top 100 prompt for sent {sent_i} in file {i}. Time elapsed: {time.time() - st}"
-                    )
 
                     claim_prompt = (
                         "Evidence: "
@@ -135,13 +131,16 @@ if __name__ == "__main__":
                     inputs = tokenizer([prompt], padding=True, return_tensors="pt").to(
                         model.device
                     )
-
+                    st = time.time()
                     outputs = model.generate(
                         inputs["input_ids"],
                         max_length=5000,
                         num_beams=2,
                         no_repeat_ngram_size=2,
                         early_stopping=True,
+                    )
+                    print(
+                        f"Generated QA for sent {sent_i} in file {i}. Time elapsed: {time.time() - st}"
                     )
 
                     tgt_text = tokenizer.batch_decode(
@@ -165,7 +164,5 @@ if __name__ == "__main__":
                     "claim": claim,
                     "bm25_qau": bm25_qau,
                 }
-                output_file.write(
-                    json.dumps(json_data, ensure_ascii=False, indent=4) + "\n"
-                )
+                output_file.write(json.dumps(json_data, ensure_ascii=False) + "\n")
                 output_file.flush()

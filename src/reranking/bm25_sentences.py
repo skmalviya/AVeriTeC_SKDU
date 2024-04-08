@@ -115,3 +115,4 @@ if __name__ == "__main__":
                 }
                 output_json.write(json.dumps(json_data, ensure_ascii=False) + "\n")
                 done += 1
+                output_file.flush()

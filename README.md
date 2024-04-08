@@ -41,5 +41,5 @@ python -m src.reranking.bm25_sentences
 ### Generate questions for each evidence sentence
 We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate questions for each evidence sentence using the closet examples from the training set. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options.
 ```
-python -m retrieval_reranking.question_generation_top_sentences
+python -m src.reranking.question_generation_top_sentences
 ```
