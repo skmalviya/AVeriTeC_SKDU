@@ -110,13 +110,8 @@ Finally, given a claim and its 3 QA pairs as evidence, we use another pre-traine
 ```bash
 python -m prediction.veracity_prediction
 ```
-The results will be presented as follows:
 
-```
-```
-
-
-We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. The result for dev and the test set below.
+The result for dev and the test set below. We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. 
 
 | Model             | Split	| Q only | Q + A | Veracity @ 0.2 | @ 0.25 | @ 0.3 |
 |-------------------|-------|--------|-------|----------------|--------|-------|
