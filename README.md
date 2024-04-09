@@ -47,7 +47,7 @@ The training and dev dataset can be found under [data](https://huggingface.co/ch
 
 ## Reproduce the baseline 
 
-Below are the steps to reproduce the baseline results. The main difference from the reported results in the paper is that, instead of requiring direct access to the paid Google Search API, we provide such search results for up to 1000 URLs per claim using different queries, and the scraped text as a knowledge store for retrieval for each claim. This is aimed at reducing the overhead cost of participating in the Shared Task.
+Below are the steps to reproduce the baseline results. The main difference from the reported results in the paper is that, instead of requiring direct access to the paid Google Search API, we provide such search results for up to 1000 URLs per claim using different queries, and the scraped text as a knowledge store for retrieval for each claim. This is aimed at reducing the overhead cost of participating in the Shared Task. Another difference is that we also added text scraped from pdf URLs to the knowledge store.
 
 
 ### 0. Set up environment
@@ -93,28 +93,35 @@ python -m src.reranking.bm25_sentences
 ```
 
 ### 3. Generate questions-answer pair for the top sentences
-We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate QA paris for each of the top 100 sentence, providing 10 closest claim-QA-pairs from the training set as in-context examples. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options. We provide the output file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/ddev_top_k_qa.json).
+We use [BLOOM](https://huggingface.co/bigscience/bloom-7b1) to generate QA paris for each of the top 100 sentence, providing 10 closest claim-QA-pairs from the training set as in-context examples. See [question_generation_top_sentences.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/question_generation_top_sentences.py) for more argument options. We provide the output file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/dev_top_k_qa.json).
 ```bash
 python -m src.reranking.question_generation_top_sentences
 ```
 
 ### 4. Rerank the QA pairs
-Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt), we rerank the QA paris and keep top 3 QA paris as evidence. We provide the output file for this step on the dev set [here]().
+Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt), we rerank the QA paris and keep top 3 QA paris as evidence. See [rerank_questions.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/rerank_questions.py) for more argument options. We provide the output file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/dev_top_3_rerank_qa.json).
 ```bash
+python -m reranking.rerank_questions
 ```
 
 
 ### 5. Veracity prediction
-Finally, given a claim and its 3 QA pairs as evidence, we use another pre-trained BERT model [bert_veracity.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. The pre-trained model is provided . We provide the prediction file for this step on the dev set [here]().
+Finally, given a claim and its 3 QA pairs as evidence, we use another pre-trained BERT model [bert_veracity.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. See [veracity_prediction.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/prediction/veracity_prediction.py) for more argument options. We provide the prediction file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/dev_vericity_prediction.json).
 ```bash
+python -m prediction.veracity_prediction
 ```
 The results will be presented as follows:
-```bash
+
 ```
+```
+
 
 We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. The result for dev and the test set below.
 
-
+| Model             | Split	| Q only | Q + A | Veracity @ 0.2 | @ 0.25 | @ 0.3 |
+|-------------------|-------|--------|-------|----------------|--------|-------|
+| AVeriTeC-BLOOM-7b | dev	|     	|   	| 	|  	| 	|
+| AVeriTeC-BLOOM-7b | test	|    	|   	|  	|  	| 	|
 
 ## Citation
 If you find AVeriTeC useful for your research and applications, please cite us using this BibTeX:

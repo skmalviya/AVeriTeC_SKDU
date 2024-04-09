@@ -30,7 +30,7 @@ def retrieve_top_k_sentences(query, document, urls, top_k):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
-        description="Get top 100 sentences for sentences in the knowledge store"
+        description="Get top 100 sentences with BM25 in the knowledge store."
     )
     parser.add_argument(
         "-k",

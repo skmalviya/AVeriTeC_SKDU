@@ -46,7 +46,7 @@ def scrape_text_from_url(url, temp_name):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Scraping text from URL")
+    parser = argparse.ArgumentParser(description="Scraping text from URLs.")
     parser.add_argument(
         "-i",
         "--tsv_input_file",
