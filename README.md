@@ -101,14 +101,19 @@ python -m src.reranking.question_generation_top_sentences
 ### 4. Rerank the QA pairs
 Using a pre-trained BERT model [bert_dual_encoder.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_dual_encoder.ckpt), we rerank the QA paris and keep top 3 QA paris as evidence. See [rerank_questions.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/reranking/rerank_questions.py) for more argument options. We provide the output file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/dev_top_3_rerank_qa.json).
 ```bash
-python -m reranking.rerank_questions
+python -m src.reranking.rerank_questions
 ```
 
 
 ### 5. Veracity prediction
 Finally, given a claim and its 3 QA pairs as evidence, we use another pre-trained BERT model [bert_veracity.ckpt](https://huggingface.co/chenxwh/AVeriTeC/blob/main/pretrained_models/bert_veracity.ckpt) to predict the veracity label. See [veracity_prediction.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/prediction/veracity_prediction.py) for more argument options. We provide the prediction file for this step on the dev set [here](https://huggingface.co/chenxwh/AVeriTeC/blob/main/data_store/dev_vericity_prediction.json).
 ```bash
-python -m prediction.veracity_prediction
+python -m src.prediction.veracity_prediction
+```
+
+Then evaluate the veracity prediction performance with (see [evaluate_veracity.py](https://huggingface.co/chenxwh/AVeriTeC/blob/main/src/prediction/evaluate_veracity.py) for more argument options):
+```bash
+python -m src.prediction.evaluate_veracity
 ```
 
 The result for dev and the test set below. We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. 

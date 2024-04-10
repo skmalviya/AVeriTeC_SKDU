@@ -24,7 +24,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i",
         "--claim_with_evidence_file",
-        default="data/dev_top3_questions.json",
+        default="data_store/dev_top_3_rerank_qa.json",
         help="Json file with claim and top question-answer pairs as evidence.",
     )
     parser.add_argument(
@@ -41,8 +41,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    examples = []
     with open(args.claim_with_evidence_file) as f:
-        examples = json.load(f)
+        for line in f:
+            examples.append(json.loads(line))
 
     bert_model_name = "bert-base-uncased"
 
@@ -113,7 +115,7 @@ if __name__ == "__main__":
             "claim_id": example["claim_id"],
             "claim": example["claim"],
             "evidence": example["evidence"],
-            "label": LABEL[answer],
+            "pred_label": LABEL[answer],
         }
         predictions.append(json_data)
 

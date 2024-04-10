@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o",
         "--output_file",
-        default="data/dev_top_3_rerank_qa.json",
+        default="data_store/dev_top_3_rerank_qa.json",
         help="Json file with the top3 reranked questions.",
     )
     parser.add_argument(
@@ -40,8 +40,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    examples = []
     with open(args.top_k_qa_file) as f:
-        examples = json.load(f)
+        for line in f:
+            examples.append(json.loads(line))
 
     bert_model_name = "bert-base-uncased"
 
