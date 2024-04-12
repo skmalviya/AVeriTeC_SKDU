@@ -120,8 +120,8 @@ The result for dev and the test set below. We recommend using 0.25 as cut-off sc
 
 | Model             | Split	| Q only | Q + A | Veracity @ 0.2 | @ 0.25 | @ 0.3 |
 |-------------------|-------|--------|-------|----------------|--------|-------|
-| AVeriTeC-BLOOM-7b | dev	|  0.24  | 0.19  | 	    0.19      |  0.09  |  0.05 |
-| AVeriTeC-BLOOM-7b | test	|  0.25  | 0.18	 |  	0.18      |  0.11  |  0.06 |
+| AVeriTeC-BLOOM-7b | dev	|  0.240 | 0.185 | 	    0.186     |  0.092 | 0.050 |
+| AVeriTeC-BLOOM-7b | test	|  0.248 | 0.185 |  	0.176     |  0.109 | 0.059 |
 
 ## Citation
 If you find AVeriTeC useful for your research and applications, please cite us using this BibTeX:
