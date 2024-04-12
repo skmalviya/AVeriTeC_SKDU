@@ -264,7 +264,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i",
         "--prediction_file",
-        default="data_store/dev_veracity.json",
+        default="data_store/dev_veracity_prediction.json",
         help="Json file with claim, evidence, and veracity prediction.",
     )
     parser.add_argument(

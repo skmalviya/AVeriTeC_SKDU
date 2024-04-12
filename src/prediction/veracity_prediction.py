@@ -26,7 +26,7 @@ class SequenceClassificationDataLoader(pl.LightningDataModule):
     def tokenize_strings(
         self,
         source_sentences,
-        max_length=512,
+        max_length=400,
         pad_to_max_length=False,
         return_tensors="pt",
     ):
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o",
         "--output_file",
-        default="data_store/dev_veracity.json",
+        default="data_store/dev_veracity_prediction.json",
         help="Json file with the veracity predictions.",
     )
     parser.add_argument(
