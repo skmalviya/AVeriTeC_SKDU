@@ -17,7 +17,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i",
         "--top_k_qa_file",
-        default="data/dev_top_k_qa.json",
+        default="data_store/dev_top_k_qa.json",
         help="Json file with claim and top k generated question-answer pairs.",
     )
     parser.add_argument(
