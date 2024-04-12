@@ -23,7 +23,7 @@ def compute_all_pairwise_scores(src_data, tgt_data, metric):
     return scores
 
 
-def print_with_space(left, right, left_space=40):
+def print_with_space(left, right, left_space=45):
     print_spaces = " " * (left_space - len(left))
     print(left + print_spaces + right)
 
@@ -303,14 +303,9 @@ if __name__ == "__main__":
             str(v_score[i]),
         )
     print("--------------------")
+    print("AVeriTeC scores by type @ 0.25:")
     type_scores = scorer.evaluate_averitec_veracity_by_type(
-        predictions, references, threshold=0.2
-    )
-    for t, v in type_scores.items():
-        print_with_space(" * Veracity scores (" + t + "):", str(v))
-    print("--------------------")
-    type_scores = scorer.evaluate_averitec_veracity_by_type(
-        predictions, references, threshold=0.3
+        predictions, references, threshold=0.25
     )
     for t, v in type_scores.items():
         print_with_space(" * Veracity scores (" + t + "):", str(v))

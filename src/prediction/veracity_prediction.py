@@ -2,11 +2,9 @@ import argparse
 import json
 import tqdm
 import torch
+import pytorch_lightning as pl
 from transformers import BertTokenizer, BertForSequenceClassification
-from data_loaders.SequenceClassificationDataLoader import (
-    SequenceClassificationDataLoader,
-)
-from models.SequenceClassificationModule import SequenceClassificationModule
+from src.models.SequenceClassificationModule import SequenceClassificationModule
 
 
 LABEL = [
@@ -15,6 +13,50 @@ LABEL = [
     "Not Enough Evidence",
     "Conflicting Evidence/Cherrypicking",
 ]
+
+
+class SequenceClassificationDataLoader(pl.LightningDataModule):
+    def __init__(self, tokenizer, data_file, batch_size, add_extra_nee=False):
+        super().__init__()
+        self.tokenizer = tokenizer
+        self.data_file = data_file
+        self.batch_size = batch_size
+        self.add_extra_nee = add_extra_nee
+
+    def tokenize_strings(
+        self,
+        source_sentences,
+        max_length=512,
+        pad_to_max_length=False,
+        return_tensors="pt",
+    ):
+        encoded_dict = self.tokenizer(
+            source_sentences,
+            max_length=max_length,
+            padding="max_length" if pad_to_max_length else "longest",
+            truncation=True,
+            return_tensors=return_tensors,
+        )
+
+        input_ids = encoded_dict["input_ids"]
+        attention_masks = encoded_dict["attention_mask"]
+
+        return input_ids, attention_masks
+
+    def quadruple_to_string(self, claim, question, answer, bool_explanation=""):
+        if bool_explanation is not None and len(bool_explanation) > 0:
+            bool_explanation = ", because " + bool_explanation.lower().strip()
+        else:
+            bool_explanation = ""
+        return (
+            "[CLAIM] "
+            + claim.strip()
+            + " [QUESTION] "
+            + question.strip()
+            + " "
+            + answer.strip()
+            + bool_explanation
+        )
 
 
 if __name__ == "__main__":
@@ -83,7 +125,9 @@ if __name__ == "__main__":
 
         tokenized_strings, attention_mask = dataLoader.tokenize_strings(example_strings)
         example_support = torch.argmax(
-            trained_model(tokenized_strings, attention_mask=attention_mask).logits,
+            trained_model(
+                tokenized_strings.to(device), attention_mask=attention_mask.to(device)
+            ).logits,
             axis=1,
         )
 
