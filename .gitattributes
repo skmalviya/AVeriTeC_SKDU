@@ -36,3 +36,4 @@ saved_model/**/* filter=lfs diff=lfs merge=lfs -text
 data_store/dev_top_k.json filter=lfs diff=lfs merge=lfs -text
 data_store/test_top_k.json filter=lfs diff=lfs merge=lfs -text
 data_store/dev_top_k_sentences.json filter=lfs diff=lfs merge=lfs -text
+data_store/dev_top_k_qa.json filter=lfs diff=lfs merge=lfs -text
