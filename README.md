@@ -126,11 +126,12 @@ The result for dev and the test set below. We recommend using 0.25 as cut-off sc
 ## Citation
 If you find AVeriTeC useful for your research and applications, please cite us using this BibTeX:
 ```bibtex
-@article{schlichtkrull2024averitec,
-  title={Averitec: A dataset for real-world claim verification with evidence from the web},
-  author={Schlichtkrull, Michael and Guo, Zhijiang and Vlachos, Andreas},
-  journal={Advances in Neural Information Processing Systems},
-  volume={36},
-  year={2024}
+@inproceedings{
+  schlichtkrull2023averitec,
+  title={{AV}eriTeC: A Dataset for Real-world Claim Verification with Evidence from the Web},
+  author={Michael Sejr Schlichtkrull and Zhijiang Guo and Andreas Vlachos},
+  booktitle={Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+  year={2023},
+  url={https://openreview.net/forum?id=fKzSz0oyaI}
 }
 ```
