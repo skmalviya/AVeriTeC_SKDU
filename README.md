@@ -9,7 +9,7 @@ Data, knowledge store and source code to reproduce the baseline experiments for 
 
 ## NEWS:
  - 19.04.2024: The submisstion page (with eval.ai) for the shared-task is alive, you can participate by submitting your predictions [here](https://eval.ai/web/challenges/challenge-page/2285/overview)!
- - 
+
 ## Dataset
 The training and dev dataset can be found under [data](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data). Test data will be released at a later date. Each claim follows the following structure:
 ```json
