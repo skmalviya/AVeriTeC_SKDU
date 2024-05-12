@@ -6,6 +6,14 @@ license: apache-2.0
 
 Data, knowledge store and source code to reproduce the baseline experiments for the [AVeriTeC](https://arxiv.org/abs/2305.13117) dataset, which will be used for the 7th [FEVER](https://fever.ai/) workshop co-hosted at EMNLP 2024.
 
+## :rocket: Our Progress
+<hr>
+
++ May-6  : Learn the [AVeriTeC Higgigface](https://huggingface.co/chenxwh/AVeriTeC) data, code and task.
++ Curr : Apply Roberta to rerank sentenses in Step-2 *knowledge_store* on the retieved sentences from BM25.
++ Next : See if it improves QA extraction and Veracity prediction.
++ Later Next : Check if Roberta is also useful in reranking QA pairs in Step-4.
+<hr>
 
 ## NEWS:
  - 19.04.2024: The submisstion page (with eval.ai) for the shared-task is alive, you can participate by submitting your predictions [here](https://eval.ai/web/challenges/challenge-page/2285/overview)!
@@ -48,7 +56,7 @@ The training and dev dataset can be found under [data](https://huggingface.co/ch
 }
 ```
 
-## Reproduce the baseline 
+## Reproduce the baseline
 
 Below are the steps to reproduce the baseline results. The main difference from the reported results in the paper is that, instead of requiring direct access to the paid Google Search API, we provide such search results for up to 1000 URLs per claim using different queries, and the scraped text as a knowledge store for retrieval for each claim. This is aimed at reducing the overhead cost of participating in the Shared Task. Another difference is that we also added text scraped from pdf URLs to the knowledge store.
 
@@ -84,7 +92,7 @@ The URLs of the search results and queries used for each claim can be found [her
  Next, we scrape the text from the URLs and parse the text to sentences. The processed files are also provided and can be found [here](https://huggingface.co/chenxwh/AVeriTeC/tree/main/data_store/knowledge_store). You can use your own scraping tool to extract sentences from the URLs.
 
 ```bash
-bash script/scraper.sh <split> <start_idx> <end_idx> 
+bash script/scraper.sh <split> <start_idx> <end_idx>
 # e.g., bash script/scraper.sh dev 0 500
 ```
 
@@ -119,7 +127,7 @@ Then evaluate the veracity prediction performance with (see [evaluate_veracity.p
 python -m src.prediction.evaluate_veracity
 ```
 
-The result for dev and the test set below. We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence. 
+The result for dev and the test set below. We recommend using 0.25 as cut-off score for evaluating the relevance of the evidence.
 
 | Model             | Split	| Q only | Q + A | Veracity @ 0.2 | @ 0.25 | @ 0.3 |
 |-------------------|-------|--------|-------|----------------|--------|-------|
