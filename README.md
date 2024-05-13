@@ -10,10 +10,32 @@ Data, knowledge store and source code to reproduce the baseline experiments for 
 <hr>
 
 + May-6  : Learn the [AVeriTeC Higgigface](https://huggingface.co/chenxwh/AVeriTeC) data, code and task.
-+ Curr : Apply Roberta to rerank sentenses in Step-2 *knowledge_store* on the retieved sentences from BM25.
++ May-12 : Setup script to **evaluate sentence retrieval**
++ Next : Apply Roberta to rerank sentenses in Step-2 *knowledge_store* on the retieved sentences from BM25.
 + Next : See if it improves QA extraction and Veracity prediction.
 + Later Next : Check if Roberta is also useful in reranking QA pairs in Step-4.
+
 <hr>
+
+## Task done
+
+  ### Setup script to evaluate sentence retrieval
+   * Modfied `src/prediction/evaluate_veracity.py` to include `evaluate_answers_only`:
+   * To call `evaluate_answers_only()`, follow:
+
+   ```python
+   # predictions contains predicted QAs
+   predictions = [{"claim_id":0,"claim":"In a letter to Steve Jobs, Sean Connery refused to appear in an apple commercial.","evidence":[{"question":"Did Sean connery send a fake letter about real Steve jobs?","answer":"Also, fake Sean Connery sent a letter to Real Steve Jobs.","url":"https://www.nbcnews.com/news/world/pre-caffeine-tech-apple-gossip-smart-pugs-flna122578"},{"question":"Did President Trump tell the truth about the fake letter to Apple CEO Steve Job Jobs Jobs  Question answer:  Yes, Trump said it was fake.?","answer":"Thanks to the confluence of my interests and the fact that it’s funny as hell, I’ve been inundated with email regarding Scoopertino’s fake 1998 letter from Sean Connery to Steve Jobs.","url":"https://maclalala2.wordpress.com/2011/06/24/%E3%81%9F%E3%81%8B%E3%81%8C%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%BC%E3%83%AB%E3%82%B9%E3%83%9E%E3%83%B3%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AB%E3%82%B8%E3%82%A7%E3%83%BC/"},{"question":"Did Steve Job send a letter of refusal to a movie called James Bond?","answer":"First, the bad news. Sean Connery never actually sent a typewritten letter to Steve Jobs in 1998 refusing to be in an Apple ad.","url":"https://www.cnet.com/culture/fake-sean-connery-letter-to-steve-jobs-goes-viral/"}],"pred_label":"Conflicting Evidence/Cherrypicking"}]
+
+   # references contains gold QAs
+   references = [{"claim":"In a letter to Steve Jobs, Sean Connery refused to appear in an apple commercial.","required_reannotation":"false","label":"Refuted","justification":"The answer and sources show that the claim was published in a fake news site so the claim is refuted.","claim_date":"31-10-2020","speaker":"null","original_claim_url":"null","fact_checking_article":"https://web.archive.org/web/20201130144023/https://checkyourfact.com/2020/11/03/fact-check-sean-connery-letter-steve-jobs-apple-1998/","reporting_source":"Facebook","location_ISO_code":"null","claim_types":["Event/Property Claim"],"fact_checking_strategies":["Written Evidence"],"questions":[{"question":"Where was the claim first published","answers":[{"answer":"It was first published on Sccopertino","answer_type":"Abstractive","source_url":"https://web.archive.org/web/20201129141238/https://scoopertino.com/exposed-the-imac-disaster-that-almost-was/","source_medium":"Web text","cached_source_url":"https://web.archive.org/web/20201129141238/https://scoopertino.com/exposed-the-imac-disaster-that-almost-was/"}]},{"question":"What kind of website is Scoopertino","answers":[{"answer":"Scoopertino is an imaginary news organization devoted to ferreting out the most relevant stories in the world of Apple, whether or not they actually occurred - says their about page","answer_type":"Extractive","source_url":"https://web.archive.org/web/20201202085933/https://scoopertino.com/about-scoopertino/","source_medium":"Web text","cached_source_url":"https://web.archive.org/web/20201202085933/https://scoopertino.com/about-scoopertino/"}]}],"cached_original_claim_url":"null"}]
+
+   from src.prediction.evaluate_veracity import AVeriTeCEvaluator, print_with_space
+   scorer = AVeriTeCEvaluator()
+   a_score = scorer.evaluate_answers_only(predictions, references)
+   print_with_space("Answer-only score (HU-" + scorer.metric + "):", str(a_score))
+
+   ```
 
 ## NEWS:
  - 19.04.2024: The submisstion page (with eval.ai) for the shared-task is alive, you can participate by submitting your predictions [here](https://eval.ai/web/challenges/challenge-page/2285/overview)!

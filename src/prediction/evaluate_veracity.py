@@ -128,6 +128,38 @@ class AVeriTeCEvaluator:
 
         return np.mean(all_utils)
 
+    def evaluate_answers_only(self, srcs, tgts):
+        all_utils = []
+        for src, tgt in zip(srcs, tgts):
+            if "evidence" not in src:
+                # If there was no evidence, use the string evidence
+                src_questions = self.extract_full_comparison_strings(
+                    src, is_target=False
+                )[: self.max_questions]
+            else:
+                src_answers = [
+                    qa["answer"] for qa in src["evidence"]
+                ]
+            # tgt_questions = [qa["question"] for qa in tgt["questions"]]
+            tgt_answers = [a["answer"] for qa in tgt["questions"] for a in qa["answers"]]
+            pairwise_scores = compute_all_pairwise_scores(
+                src_answers, tgt_answers, self.pairwise_metric
+            )
+
+            assignment = scipy.optimize.linear_sum_assignment(
+                pairwise_scores, maximize=True
+            )
+
+            assignment_utility = pairwise_scores[assignment[0], assignment[1]].sum()
+
+            # Reweight to account for unmatched target questions
+            reweight_term = 1 / float(len(tgt_answers))
+            assignment_utility *= reweight_term
+
+            all_utils.append(assignment_utility)
+
+        return np.mean(all_utils)
+
     def get_n_best_qau(self, srcs, tgts, n=3):
         all_utils = []
         for src, tgt in zip(srcs, tgts):
@@ -283,6 +315,10 @@ if __name__ == "__main__":
     scorer = AVeriTeCEvaluator()
     q_score = scorer.evaluate_questions_only(predictions, references)
     print_with_space("Question-only score (HU-" + scorer.metric + "):", str(q_score))
+
+    a_score = scorer.evaluate_answers_only(predictions, references)
+    print_with_space("Answer-only score (HU-" + scorer.metric + "):", str(a_score))
+
     p_score = scorer.evaluate_questions_and_answers(predictions, references)
     print_with_space("Question-answer score (HU-" + scorer.metric + "):", str(p_score))
     print("====================")
