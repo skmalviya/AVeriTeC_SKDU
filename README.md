@@ -19,6 +19,11 @@ Data, knowledge store and source code to reproduce the baseline experiments for 
 
 ## Task done
 
+  ### Generated pos-neg data for contrastive-learning based roberta_sentence_selector
+  ```
+    PYTHONPATH=src python src/my_methods/roberta_sentence_selector/generate_pairs.py
+  ```
+  
   ### Setup script to evaluate sentence retrieval
    * Modfied `src/prediction/evaluate_veracity.py` to include `evaluate_answers_only`:
    * To call `evaluate_answers_only()`, follow:
