@@ -1,0 +1,28 @@
+/home/shrikant/miniconda3/bin/conda run -n averitec_DESK1 --no-capture-output python src/my_methods/roberta_sentence_selector/pred_sentence_scores.py --data_dir data --batch_size 64 --bert_name roberta-base --test_ckpt RobertaCls_0519_11:32:53_sent_reranker_multi_10 
+Namespace(data_dir='data', cache_dir=None, ckpt_root_dir='bert_weights/roberta_sentence_selector_ckpt_root_dir', test_ckpt='RobertaCls_0519_11:32:53_sent_reranker_multi_10', load_model_path=None, model_type='RobertaCls', bert_name='roberta-base', data_generator='RobertaSentenceGenerator', force_generate=False, save_all_ckpt=False, test=False, fix_bert=False, device='cuda:0', batch_size=64, gradient_accumulation_steps=4, dropout=0.5, warm_rate=0.2, seed=1234, lr=1e-05, weight_decay=0.0001, max_seq_len=512, max_epoch=3, print_freq=100, save_freq=1, wiki_path='data/feverous_wikiv1.db', predict_threshold=0.5, max_sent=5, retrieval_turns=3, user_given_model_suffix='Default', train_data_extend_multi=1)
+/home/shrikant/miniconda3/envs/averitec_DESK1/lib/python3.11/site-packages/huggingface_hub/file_download.py:1132: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+0 -> init linear1.weight torch.Size([128, 768])
+1 -> not init linear1.bias torch.Size([128])
+2 -> init linear2.weight torch.Size([1, 128])
+3 -> not init linear2.bias torch.Size([1])
+Some weights of the model checkpoint at roberta-base were not used when initializing RobertaModel: ['lm_head.bias', 'lm_head.dense.bias', 'lm_head.layer_norm.weight', 'lm_head.layer_norm.bias', 'lm_head.dense.weight']
+- This IS expected if you are initializing RobertaModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing RobertaModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of RobertaModel were not initialized from the model checkpoint at roberta-base and are newly initialized: ['roberta.pooler.dense.bias', 'roberta.pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+The model has 124,744,193 trainable parameters
+generate 50000 sentence pairs
+train data length: 0
+dev data length: 50000
+test data length: 0
+loading checkpoint from: bert_weights/roberta_sentence_selector_ckpt_root_dir/RobertaCls_0519_11:32:53_sent_reranker_multi_10
+save sentence scores to data/dev.sentences.roberta.s100.jsonl.RobertaCls_0519_11:32:53_sent_reranker_multi_10
+782it [03:23,  3.85it/s]
+Answer-only score metric=(HU-meteor) level=5 : 0.13934254765507859
+Answer-only score metric=(HU-meteor) level=10 : 0.16894633462054992
+Answer-only score metric=(HU-meteor) level=50 : 0.21546624558195168
+Answer-only score metric=(HU-meteor) level=100 : 0.23383160141118098
+
+Process finished with exit code 0
+

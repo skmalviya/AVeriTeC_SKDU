@@ -7,7 +7,7 @@ def generate_lines(line, gold_line, split):
     id = line["claim_id"]
     claim = gold_line["claim"]
 
-    pos_sents = [a["answer"] for qa in gold_line["questions"] for a in qa["answers"]]
+    pos_sents = [a["answer"] for qa in gold_line["questions"] for a in qa["answers"]] if split != 'test' else []
     neg_sents = [s["sentence"] for s in line["top_100"]]
 
     oentry = {
@@ -15,6 +15,8 @@ def generate_lines(line, gold_line, split):
         "claim": claim,
         "pos_sents": pos_sents,
         "neg_sents": neg_sents,
+        "all_candidates": pos_sents + neg_sents if split=='train' else neg_sents,
+        "top_100": line["top_100"],
     }
 
     return oentry
@@ -36,8 +38,8 @@ if __name__ == "__main__":
         "-dt",
         "--data_type",
         type=str,
-        default="sent",
-        help="sent/qa",
+        default="sentences",
+        help="sentences/qa",
     )
     parser.add_argument(
         "-p",
@@ -50,13 +52,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # for split in ["debug", "dev", "train", "test"]:
-    for split in ["train"]:
+    for split in ["dev", "train"]:
 
         with open("{0}/{1}.json".format(args.data_path, split), "r", encoding="utf-8") as json_file:
             gold_data = json.load(json_file)
 
         input_path = "{0}/{1}.{2}".format(args.data_path, split, args.pred_filename_suffix)
-        output_path = "{0}/{1}.pos_neg.{2}.json".format(args.data_path, split, args.data_type)
+        output_path = "{0}/{1}.pos_neg.{2}.jsonl".format(args.data_path, split, args.data_type)
 
         with open(input_path, "r", encoding="utf-8") as in_file, open(output_path, "w") as out_file:
             for i, line in enumerate(in_file):

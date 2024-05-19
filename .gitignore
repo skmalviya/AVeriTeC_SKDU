@@ -7,6 +7,10 @@ __pycache__/
 data/*
 data_store/*
 
+# weights/ckpts
+bert_weights/*
+runs/*
+
 # # C extensions
 # *.so
 

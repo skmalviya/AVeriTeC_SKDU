@@ -96,6 +96,27 @@ class AVeriTeCEvaluator:
         f1["acc"] = acc
         return f1
 
+    def evaluate_src_tgt(self, srcs, tgts, max_sent=5):
+        all_utils = []
+        for src, tgt in zip(srcs, tgts):
+            pairwise_scores = compute_all_pairwise_scores(
+                src[:max_sent], tgt, self.pairwise_metric
+            )
+
+            assignment = scipy.optimize.linear_sum_assignment(
+                pairwise_scores, maximize=True
+            )
+
+            assignment_utility = pairwise_scores[assignment[0], assignment[1]].sum()
+
+            # Reweight to account for unmatched target questions
+            reweight_term = 1 / float(len(tgt))
+            assignment_utility *= reweight_term
+
+            all_utils.append(assignment_utility)
+
+        return np.mean(all_utils)
+
     def evaluate_questions_only(self, srcs, tgts):
         all_utils = []
         for src, tgt in zip(srcs, tgts):
