@@ -93,7 +93,7 @@ def val(model, dataloader, split, args):
     preds_epoch = [float(p) for p in preds_epoch]
     for cand_ids in cand_id_lst:
         pred_scores = preds_epoch[stat:stat+len(cand_ids)]
-        preds = list(torch.topk(torch.tensor(pred_scores), k=min(200, len(pred_scores)))[1].numpy())
+        preds = list(torch.topk(torch.tensor(pred_scores), k=min(100, len(pred_scores)))[1].numpy())
         sent_scores.append(pred_scores)
         pred_ids.append(preds)
         stat += len(cand_ids)
@@ -104,7 +104,7 @@ def val(model, dataloader, split, args):
             oentry = {
             "claim_id": entry["id"],
             "claim": entry["claim"],
-            "top_100": [{**entry["top_100"][idx], **{"score":sent_score[idx]}} for idx in preds]
+            "top_100": [{**entry["top_200"][idx], **{"score":sent_score[idx]}} for idx in preds]
             }
 
             predictions.append([e["sentence"] for e in oentry["top_100"]])

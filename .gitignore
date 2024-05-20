@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # data
-data/*
+data*/*
 data_store/*
 
 # weights/ckpts

@@ -8,7 +8,7 @@ def generate_lines(line, gold_line, split):
     claim = gold_line["claim"]
 
     pos_sents = [a["answer"] for qa in gold_line["questions"] for a in qa["answers"]] if split != 'test' else []
-    neg_sents = [s["sentence"] for s in line["top_100"]]
+    neg_sents = [s["sentence"] for s in line["top_200"]]
 
     oentry = {
         "id": id,
@@ -16,7 +16,7 @@ def generate_lines(line, gold_line, split):
         "pos_sents": pos_sents,
         "neg_sents": neg_sents,
         "all_candidates": pos_sents + neg_sents if split=='train' else neg_sents,
-        "top_100": line["top_100"],
+        "top_200": line["top_200"],
     }
 
     return oentry
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         "-p",
         "--pred_filename_suffix",
         type=str,
-        default="top100.sent.json",
+        default="top200.sent.json",
         help="The path of the file that stores predicted top-100 sentences for each claim.",
     )
 
