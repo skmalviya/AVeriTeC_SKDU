@@ -67,7 +67,7 @@ class RobertaSentenceGenerator(Dataset):
                 neg_sents = entry["neg_sents"]
                 if (not pos_sents) or (not neg_sents):
                     continue
-                for ps in pos_sents*self.args.train_data_extend_multi:
+                for ps in pos_sents*self.args.train_data_extend_multiplication:
                     # [sent, page_title, sent_id]
                     ns = random.choice(neg_sents)
                     self.instances.append([unidecode(clean_text(entry["claim"])), unidecode(clean_text(ps)), unidecode(clean_text(ns)) ])

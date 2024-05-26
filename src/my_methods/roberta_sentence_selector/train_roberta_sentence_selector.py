@@ -203,6 +203,9 @@ def val(model, dataloader, criterion, tokenizer, preprocessor, tb, epoch, args):
     dataloader.dataset.print_example()
     preds_epoch = []
 
+    output_path = os.path.join(args.data_dir, f"dev.sentences.roberta.s100.jsonl" + ".epoch_" + str(epoch))
+    print(f"save sentence scores to {output_path}")
+
     model.eval()
     for ii, data_entry in tqdm(enumerate(dataloader)):
         res = model(data_entry, args, test_mode=True)

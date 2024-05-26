@@ -26,7 +26,6 @@ def eval_sentences(args, in_file, split, top_k):
 
     scorer = AVeriTeCEvaluator()
     valid_scores = []
-    print("Total data to eval = ", len(references))
     print(f"Evaluating sentence retrieval on Answer-only score metric=(HU-{scorer.metric})...")
     for level in [5, 10, 50, 100, 150, 200]:
         if level <= top_k:
@@ -43,5 +42,4 @@ if __name__ == '__main__':
     parser.add_argument('--top_k', type=int)
 
     args = parser.parse_args()
-    print("Loading sentences file...", args.input_path)
     eval_sentences(args, args.input_path, args.split, args.top_k)

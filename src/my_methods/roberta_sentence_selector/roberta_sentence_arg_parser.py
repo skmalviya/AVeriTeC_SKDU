@@ -56,6 +56,6 @@ def get_parser():
     parser.add_argument('--retrieval_turns', type=int, default=3)
 
     parser.add_argument('--user_given_model_suffix', type=str, default='Default')
-    parser.add_argument('--train_data_extend_multi', type=int, default=1)
+    parser.add_argument('--train_data_extend_multiplication', type=int, default=1)
 
     return parser
