@@ -51,17 +51,15 @@ def get_sentence_embeddings_in_batches(model, tokenizer, sentences, batch_size=3
         torch.cuda.empty_cache()
     return torch.cat(embeddings, dim=0).cpu()  # Concatenate and move all embeddings to CPU at once
 
-def retrieve_top_k_sentences(query, document, urls, top_k, batch_size):
+def retrieve_top_k_sentences(query, document, urls, bert_path, top_k, batch_size):
     # Load pre-trained RoBERTa model and tokenizer
-    tokenizer = BertTokenizer.from_pretrained('bert_weights/nlp_corom_sentence-embedding_english-base')
-    model = RobertaModel.from_pretrained('bert_weights/nlp_corom_sentence-embedding_english-base')
+    # ckpt = "bert_weights/nlp_corom_sentence-embedding_english-base"
+    ckpt = bert_path
+    tokenizer = BertTokenizer.from_pretrained(bert_path)
+    model = RobertaModel.from_pretrained(bert_path)
 
     # Get the embedding for the claim
     claim_embedding = get_sentence_embedding(model, tokenizer, query).unsqueeze(0)
-
-    # Get embeddings for all sentences in the pool
-    # sentence_embeddings = torch.stack(
-    #     [get_sentence_embedding(model, tokenizer, sentence) for sentence in tqdm(document)])
 
     # Get embeddings for all sentences in the pool
     sentence_embeddings = get_sentence_embeddings_in_batches(model, tokenizer, document, batch_size)
@@ -77,6 +75,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="Get top 100 sentences with BM25 in the knowledge store."
+    )
+    parser.add_argument(
+        "-m",
+        "--bert_path",
+        type=str,
+        default="",
+        help="The path of the pretrained BERT model.",
     )
     parser.add_argument(
         "-k",
@@ -153,7 +158,7 @@ if __name__ == "__main__":
                 # Retrieve top_k sentences with tfidf
                 st = time.time()
                 top_k_sentences, top_k_urls = retrieve_top_k_sentences(
-                    example["claim"], document_in_sentences, sentence_urls, args.top_k, args.batch_size
+                    example["claim"], document_in_sentences, sentence_urls, args.bert_path, args.top_k, args.batch_size
                 )
                 print(f"Top {args.top_k} retrieved. Time elapsed: {time.time() - st}.")
 

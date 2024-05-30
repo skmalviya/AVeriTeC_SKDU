@@ -11,15 +11,15 @@ from prediction.evaluate_sentences import eval_sentences
 def main(args):
 
     # merge two results
-    data_tfidf = load_jsonl_data(args.in_tfidf)
-    data_bm25 = load_jsonl_data(args.in_bm25)
+    data_f1 = load_jsonl_data(args.in_f1)
+    data_f2 = load_jsonl_data(args.in_f2)
 
     predicted_pages = []
     merge_evi_num = []
     page_num = 5
 
     with open(args.out_path, "w", encoding="utf-8") as f_out:
-        for js1, js2 in tqdm(zip(data_tfidf, data_bm25)):
+        for js1, js2 in tqdm(zip(data_f1, data_f2)):
             assert js1["claim_id"] == js2["claim_id"]
 
             out_dict = {"claim_id": js1["claim_id"], "claim": js1["claim"], "top_200": js1["top_100"] + js2["top_100"]}
@@ -29,8 +29,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data')
-    parser.add_argument('--in_tfidf', type=str)
-    parser.add_argument('--in_bm25', type=str)
+    parser.add_argument('--in_f1', type=str)
+    parser.add_argument('--in_f2', type=str)
     parser.add_argument('--out_path', type=str)
     parser.add_argument('--split', type=str, default="dev")
     parser.add_argument('--count', type=int, default=200)

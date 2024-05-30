@@ -11,19 +11,28 @@ Data, knowledge store and source code to reproduce the baseline experiments for 
 
 + May-6  : Learn the [AVeriTeC Higgigface](https://huggingface.co/chenxwh/AVeriTeC) data, code and task.
 + May-12 : Setup script to **evaluate sentence retrieval**
-+ Next : Apply Roberta to rerank sentenses in Step-2 *knowledge_store* on the retieved sentences from BM25.
-+ Next : See if it improves QA extraction and Veracity prediction.
-+ Later Next : Check if Roberta is also useful in reranking QA pairs in Step-4.
++ May-30 : Applied Roberta to rerank sentenses in Step-2 *knowledge_store* on the retieved sentences from BM25+TFIDF. But much improvement seen with bi-encoder and cross-encoder retrieval. But both took around 2 days on `dev` sentence retrieval.
++ Next : Get also **top100** sentences for `train` split.
++ Later Next : Apply MultiStage Retreival: <br>
+    Roberta🠊HybRank🠊HLATR.
++ More Later: Check if MultiStage Retreival is also useful in reranking QA pairs in Step-4.
 
 <hr>
 
+<img src="img/dev_sentences_retr.png" width="600">
+
+
+
 ## Task done
+
+  ### Applied bi-encoder and cross-encoder for sentences retrieval
+
 
   ### Generated pos-neg data for contrastive-learning based roberta_sentence_selector
   ```
     PYTHONPATH=src python src/my_methods/roberta_sentence_selector/generate_pairs.py
   ```
-  
+
   ### Setup script to evaluate sentence retrieval
    * Modfied `src/prediction/evaluate_veracity.py` to include `evaluate_answers_only`:
    * To call `evaluate_answers_only()`, follow:
