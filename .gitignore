@@ -11,6 +11,7 @@ data_store/*
 bert_weights/*
 runs/*
 pretrained_models/*
+llm_weights/
 
 # sh/log
 NCC_*/*

@@ -3,22 +3,46 @@ import json
 import os
 import time
 import numpy as np
-import nltk
-from rank_bm25 import BM25Okapi
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 from tqdm import tqdm
 import torch
-from transformers import BertTokenizer, RobertaForSequenceClassification
 import transformers
 from sentence_transformers import CrossEncoder
+import unicodedata
+from urllib.parse import unquote
+from cleantext import clean
+import re
+pt = re.compile(r"\[\[.*?\|(.*?)]]")
 transformers.logging.set_verbosity_error()
-
 
 # Check if GPU is available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
+def clean_text(text):
+    # text = re.sub(pt, r"\1", text)
+    text = unquote(text)
+    text = unicodedata.normalize('NFD', text)
+    text = clean(text.strip(),
+    fix_unicode=True,               # fix various unicode errors
+    to_ascii=False,                 # transliterate to closest ASCII representation
+    lower=False,                    # lowercase text
+    no_line_breaks=True,           # fully strip line breaks as opposed to only normalizing them
+    no_urls=True,                   # replace all URLs with a special token
+    no_emails=False,                # replace all email addresses with a special token
+    no_phone_numbers=False,         # replace all phone numbers with a special token
+    no_numbers=False,               # replace all numbers with a special token
+    no_digits=False,                # replace all digits with a special token
+    no_currency_symbols=False,      # replace all currency symbols with a special token
+    no_punct=False,                 # remove punctuations
+    replace_with_url="<URL>",
+    replace_with_email="<EMAIL>",
+    replace_with_phone_number="<PHONE>",
+    replace_with_number="<NUMBER>",
+    replace_with_digit="0",
+    replace_with_currency_symbol="<CUR>",
+    lang="en"                       # set to 'de' for German special handling
+    )
+    return text
 
 def combine_all_sentences(knowledge_file):
     sentences, urls = [], []
@@ -37,58 +61,6 @@ def get_sentence_embedding(model, tokenizer, sentence):
         outputs = model(**inputs)
     # Use the mean of the output embeddings
     return outputs.last_hidden_state.mean(dim=1).squeeze()
-
-def get_sentence_embeddings_in_batches(model, tokenizer, sentences, batch_size=32):
-    model.to(device)  # Move model to GPU
-
-    embeddings = []
-    for i in tqdm(range(0, len(sentences), batch_size)):
-        batch = sentences[i:i+batch_size]
-        inputs = tokenizer(batch, return_tensors='pt', truncation=True, padding=True, max_length=510).to(device)  # Move inputs to GPU
-
-        with torch.no_grad():
-            outputs = model(**inputs)
-        batch_embeddings = outputs.last_hidden_state.mean(dim=1)  # Mean of the token embeddings
-        embeddings.append(batch_embeddings)
-        del batch_embeddings
-        torch.cuda.empty_cache()
-    return torch.cat(embeddings, dim=0).cpu()  # Concatenate and move all embeddings to CPU at once
-
-def retrieve_top_k_sentences_old(query, document, urls, top_k, batch_size):
-    # Load pre-trained RoBERTa model and tokenizer
-    tokenizer = BertTokenizer.from_pretrained('bert_weights/nlp_corom_passage-ranking_english-base')
-    model = RobertaForSequenceClassification.from_pretrained('bert_weights/nlp_corom_passage-ranking_english-base').to(device)
-    scores = []
-    for i in tqdm(range(0, len(document), batch_size)):
-        batch_sent = document[i:i+batch_size]
-        batch = [ (query,s) for s in batch_sent ]
-
-        inputs = tokenizer.batch_encode_plus(
-            batch,
-            return_tensors='pt',
-            max_length=510,
-            truncation=True,
-            padding=True
-        )
-
-        input_ids = inputs['input_ids'].to(device)
-        attention_mask = inputs['attention_mask'].to(device)
-
-        # Get model predictions
-        with torch.no_grad():
-            outputs = model(input_ids, attention_mask=attention_mask)
-            logits = outputs.logits.squeeze().cpu().numpy()
-
-        # Store scores
-        scores.extend(logits)
-        del inputs
-        torch.cuda.empty_cache()
-
-    # Get the index of ranked sentences
-    top_k_idx = np.argsort(scores)[-top_k:][::-1]
-
-    return [document[i] for i in top_k_idx], [urls[i] for i in top_k_idx]
-
 
 def retrieve_top_k_sentences(query, document, urls, bert_path, top_k, batch_size):
     # Load pre-trained RoBERTa model and tokenizer
@@ -197,6 +169,9 @@ if __name__ == "__main__":
                 print(
                     f"Obtained {len(document_in_sentences)} sentences from {num_urls_this_claim} urls."
                 )
+
+                # Clean sentences with cleantext.clean_text(): "It didnt improve the Sentence Retr HU-METEOR Score, so commented!!"
+                # document_in_sentences = [clean_text(s) for s in document_in_sentences]
 
                 # Retrieve top_k sentences with tfidf
                 st = time.time()
