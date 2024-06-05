@@ -56,6 +56,12 @@ if __name__ == "__main__":
     parser.add_argument("--reference_corpus", default="data/train.json", help="")
     parser.add_argument("--target_file", default="data/dev.json", help="")
     parser.add_argument(
+        "-l",
+        "--llm",
+        default="bigscience/bloom-7b1",
+        help="Checkpoint of LLM used for question generation.",
+    )
+    parser.add_argument(
         "-i",
         "--top_k_target_knowledge",
         default="data_store/dev_top_k_sentences.json",
@@ -90,9 +96,9 @@ if __name__ == "__main__":
     prompt_bm25 = BM25Okapi(tokenized_corpus)
 
     # Load the bloom model:
-    tokenizer = BloomTokenizerFast.from_pretrained("bigscience/bloom-7b1")
+    tokenizer = BloomTokenizerFast.from_pretrained(args.llm)
     model = BloomForCausalLM.from_pretrained(
-        "bigscience/bloom-7b1",
+        args.llm,
         device_map="auto",
         torch_dtype=torch.bfloat16,
         offload_folder="./offload",
