@@ -5,7 +5,9 @@ import nltk
 from rank_bm25 import BM25Okapi
 import numpy as np
 import torch
+from tqdm import tqdm
 from transformers import BloomTokenizerFast, BloomForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 def claim2prompts(example):
@@ -79,8 +81,18 @@ if __name__ == "__main__":
         type=int,
         help="How many documents should we pick out with BM25",
     )
+    parser.add_argument(
+        "-s",
+        "--start",
+        type=int,
+        default=0,
+        help="Staring index of the example_data to process.",
+    )
+    parser.add_argument(
+        "-e", "--end", type=int, default=-1, help="End index of the example_data to process."
+    )
     args = parser.parse_args()
-
+    print("Provided arguments: ", args)
     # few-shot learning from the training set
     with open(args.reference_corpus, "r", encoding="utf-8") as json_file:
         train_examples = json.load(json_file)
@@ -96,17 +108,31 @@ if __name__ == "__main__":
     prompt_bm25 = BM25Okapi(tokenized_corpus)
 
     # Load the bloom model:
-    tokenizer = BloomTokenizerFast.from_pretrained(args.llm)
-    model = BloomForCausalLM.from_pretrained(
+    # tokenizer = BloomTokenizerFast.from_pretrained(args.llm)
+    # model = BloomForCausalLM.from_pretrained(
+    #     args.llm,
+    #     device_map="auto",
+    #     torch_dtype=torch.bfloat16,
+    #     offload_folder="./offload",
+    # )
+
+    tokenizer = AutoTokenizer.from_pretrained(args.llm)
+    model = AutoModelForCausalLM.from_pretrained(
         args.llm,
         device_map="auto",
         torch_dtype=torch.bfloat16,
         offload_folder="./offload",
     )
+    # TRANSFORMERS: Asking to pad but the tokenizer does not have a padding token
+    if tokenizer.pad_token is None:
+        tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+        model.resize_token_embeddings(len(tokenizer))
 
     with open(args.output_questions, "w", encoding="utf-8") as output_file:
         with open(args.top_k_target_knowledge, "r", encoding="utf-8") as json_file:
             for i, line in enumerate(json_file):
+                if (args.end == -1 and i<args.start) or (args.end != -1 and (i<args.start or i>args.en)):
+                    continue
                 data = json.loads(line)
                 top_k_sentences_urls = data[f"top_{args.top_k}"]
                 claim = data["claim"]
@@ -140,7 +166,7 @@ if __name__ == "__main__":
                     st = time.time()
                     outputs = model.generate(
                         inputs["input_ids"],
-                        max_length=5000,
+                        max_new_tokens=5000, # Avoid using max_length=5000, as its was giving error: https://discuss.huggingface.co/t/confused-about-max-length-and-max-new-tokens/30892/6
                         num_beams=2,
                         no_repeat_ngram_size=2,
                         early_stopping=True,
