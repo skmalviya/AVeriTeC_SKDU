@@ -1,3 +1,16 @@
+# Failed AVeriTeC_SKDU sent retr experiments
+Cross_Enocder_Training_Meteor/*
+Reward_Model_Training_Meteor/*
+reward_model_sentences/*
+reward_model_sentences_distilbert/*
+src/my_methods/cross_encoder_RL_METEOR/*
+src/my_methods/roberta_sentence_selector1/*
+src/reranking/cross_encoder_RL_METEOR_sentences.py
+src/shri_scripts/*
+
+# Stored Embeddings
+prompt_embeddings/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

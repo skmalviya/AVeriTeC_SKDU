@@ -84,7 +84,7 @@ def retrieve_top_k_sentences(query, document, urls, bert_path, top_k, batch_size
     # Get the index of ranked sentences
     top_k_idx = np.argsort(scores)[::-1][:top_k]
 
-    return [document[i] for i in top_k_idx], [urls[i] for i in top_k_idx]
+    return [document[i] for i in top_k_idx], [urls[i] for i in top_k_idx], [scores[i] for i in top_k_idx]
 
 if __name__ == "__main__":
 
@@ -170,12 +170,13 @@ if __name__ == "__main__":
                     f"Obtained {len(document_in_sentences)} sentences from {num_urls_this_claim} urls."
                 )
 
-                # Clean sentences with cleantext.clean_text(): "It didnt improve the Sentence Retr HU-METEOR Score, so commented!!"
+                # Clean sentences with cleantext.clean_text()
+                # It didnt improve the Sentence Retr HU-METEOR Score, so commented!!
                 # document_in_sentences = [clean_text(s) for s in document_in_sentences]
 
                 # Retrieve top_k sentences with tfidf
                 st = time.time()
-                top_k_sentences, top_k_urls = retrieve_top_k_sentences(
+                top_k_sentences, top_k_urls, top_k_scores = retrieve_top_k_sentences(
                     example["claim"], document_in_sentences, sentence_urls, args.bert_path, args.top_k, args.batch_size
                 )
                 print(f"Top {args.top_k} retrieved. Time elapsed: {time.time() - st}.")
@@ -184,8 +185,8 @@ if __name__ == "__main__":
                     "claim_id": idx,
                     "claim": example["claim"],
                     f"top_{args.top_k}": [
-                        {"sentence": sent, "url": url}
-                        for sent, url in zip(top_k_sentences, top_k_urls)
+                        {"sentence": sent, "url": url, "score": str(score)}
+                        for sent, url, score in zip(top_k_sentences, top_k_urls, top_k_scores)
                     ],
                 }
                 output_json.write(json.dumps(json_data, ensure_ascii=False) + "\n")

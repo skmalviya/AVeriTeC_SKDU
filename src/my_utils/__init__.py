@@ -9,6 +9,7 @@ from .common_utils import load_jsonl_data, save_jsonl_data, load_pkl_data, save_
 from .common_utils import rename_obj, merge_obj_data
 from .common_utils import print_json_format_obj
 from .common_utils import average
+from .common_utils import setup_logger
 from .task_metric import compute_metrics
 
 from .pytorch_common_utils import set_seed, get_optimizer

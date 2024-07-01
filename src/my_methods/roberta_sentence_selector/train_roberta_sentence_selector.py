@@ -22,6 +22,7 @@ from roberta_sentence_generator import RobertaSentenceGenerator
 import graph_cell_config as config
 
 from prediction.evaluate_veracity import AVeriTeCEvaluator
+from prediction.evaluate_sentences import eval_sentences
 
 def main():
     args = get_parser().parse_args()
@@ -89,6 +90,10 @@ def main():
 
     global_step = 0
     optimizer.zero_grad()
+
+    print (f"{'*' * 30} Initialized model performance {'*' * 30}")
+    val_recall = val(model, val_dataloader, criterion, tokenizer, preprocessor, tb, 'init', args)
+    # valid_scores = eval_sentences(args, output_path, 'dev')
 
     for epoch in range(args.max_epoch):
         train_data.generate_train_instances_one_epoch()
@@ -244,13 +249,13 @@ def val(model, dataloader, criterion, tokenizer, preprocessor, tb, epoch, args):
 
     references = [e['pos_sents'] for e in dataloader.dataset.raw_data]
     scorer = AVeriTeCEvaluator()
-    valid_scores = []
-    for level in [5, 10, 50, 100]:
-        score = scorer.evaluate_src_tgt(predictions, references, max_sent=level)
-        print(f"Answer-only score metric=(HU-{scorer.metric}) level={level} : {score}")
-        valid_scores.append(score)
-
-    return valid_scores[1]
+    # valid_scores = []
+    # for level in [5, 10, 50, 100]:
+    #     score = scorer.evaluate_src_tgt(predictions, references, max_sent=level)
+    #     print(f"Answer-only score metric=(HU-{scorer.metric}) level={level} : {score}")
+    #     valid_scores.append(score)
+    valid_scores = eval_sentences(args, output_path, 'dev')
+    return valid_scores[0]
 
 def print_res(loss_epoch, preds, golds, data_type, epoch):
     loss = average(loss_epoch)

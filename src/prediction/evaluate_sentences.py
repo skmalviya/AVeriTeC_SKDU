@@ -7,7 +7,7 @@ import nltk
 from nltk import word_tokenize
 from prediction.evaluate_veracity import AVeriTeCEvaluator
 
-def eval_sentences(args, in_file, split, top_k):
+def eval_sentences(args, in_file, split, top_k=100):
     print("Loading gold and pred sentence...")
     # Extract gold sents
     references = []
@@ -28,7 +28,7 @@ def eval_sentences(args, in_file, split, top_k):
     valid_scores = []
     print("Total data to eval = ", len(references))
     print(f"Evaluating sentence retrieval on Answer-only score metric=(HU-{scorer.metric})...")
-    for level in [5, 10, 50, 100, 150, 200]:
+    for level in [3, 5, 10, 50, 100, 150, 200, 500, 750, 1000]:
         if level <= top_k:
             score = scorer.evaluate_src_tgt(predictions, references, max_sent=level)
             print(f"Answer-only score metric=(HU-{scorer.metric}) level={level} : {score}")

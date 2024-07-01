@@ -7,7 +7,27 @@ def generate_lines(line, gold_line, split):
     id = line["claim_id"]
     claim = gold_line["claim"]
 
-    pos_sents = [a["answer"] for qa in gold_line["questions"] for a in qa["answers"]] if split != 'test' else []
+    pos_sents = []
+
+    if split != 'test':
+        for question in gold_line["questions"]:
+            answer_strings = []
+            for a in question["answers"]:
+                if a["answer_type"] in ["Extractive", "Abstractive"]:
+                    answer_strings.append(a["answer"])
+                if a["answer_type"] == "Boolean":
+                    answer_strings.append(
+                        a["answer"]
+                        + ", because "
+                        + a["boolean_explanation"].lower().strip()
+                    )
+
+            for a_text in answer_strings:
+                if not a_text[-1] in [".", "!", ":", "?"]:
+                    a_text += "."
+                pos_sents.append(a_text)
+
+
     neg_sents = [s["sentence"] for s in line["top_100"]]
 
     oentry = {

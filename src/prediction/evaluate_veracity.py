@@ -159,7 +159,7 @@ class AVeriTeCEvaluator:
                 )[: self.max_questions]
             else:
                 src_answers = [
-                    qa["answer"] for qa in src["evidence"]
+                    qa["answer"] for qa in src["evidence"][: self.max_questions]
                 ]
             # tgt_questions = [qa["question"] for qa in tgt["questions"]]
             tgt_answers = [a["answer"] for qa in tgt["questions"] for a in qa["answers"]]

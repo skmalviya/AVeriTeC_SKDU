@@ -8,6 +8,18 @@ import json
 import pickle as pkl
 import os
 
+def setup_logger(logger, args, filename='log'):
+    logger.setLevel(logging.INFO)
+    if logger.hasHandlers():
+        logger.handlers.clear()
+    log_formatter = logging.Formatter(fmt="[%(asctime)s][%(levelname)s] - %(message)s", datefmt='%Y-%m-%d %H:%M:%S')
+    console = logging.StreamHandler()
+    console.setFormatter(log_formatter)
+    file_handler = logging.FileHandler(os.path.join(args.output_dir, filename))
+    file_handler.setFormatter(log_formatter)
+    logger.addHandler(console)
+    logger.addHandler(file_handler)
+
 def average(list):
     return float(sum(list) / len(list))
 
