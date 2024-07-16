@@ -12,6 +12,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str)
     parser.add_argument('--input_path', type=str)
+    parser.add_argument('--n_samples', type=int)
+    parser.add_argument('--start', type=int)
+    parser.add_argument('--end', type=int)
     parser.add_argument('--split', type=str)
     parser.add_argument('--top_k', type=int)
 
@@ -39,13 +42,13 @@ if __name__ == '__main__':
         print("====================")
         scorer.max_questions = level
         print(f"For Level={level}...")
-        q_score = scorer.evaluate_questions_only(predictions, references)
+        q_score = scorer.evaluate_questions_only(predictions[args.start:args.end], references[args.start:args.end])
         print_with_space("Question-only score (HU-" + scorer.metric + "):", str(q_score))
 
-        a_score = scorer.evaluate_answers_only(predictions, references)
+        a_score = scorer.evaluate_answers_only(predictions[args.start:args.end], references[args.start:args.end])
         print_with_space("Answer-only score (HU-" + scorer.metric + "):", str(a_score))
 
-        qa_score = scorer.evaluate_questions_and_answers(predictions, references)
+        qa_score = scorer.evaluate_questions_and_answers(predictions[args.start:args.end], references[args.start:args.end])
         print_with_space("Question-answer score (HU-" + scorer.metric + "):", str(qa_score))
         print("====================")
 

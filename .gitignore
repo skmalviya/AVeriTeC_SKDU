@@ -10,6 +10,7 @@ src/shri_scripts/*
 
 # Stored Embeddings
 prompt_embeddings/*
+output/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
