@@ -153,7 +153,7 @@ if __name__ == "__main__":
 
     files_to_process = list(range(args.start, args.end))
     total = len(files_to_process)
-
+    args.json_output = f"{args.json_output}_{args.start}_{args.end}.json"
     with open(args.json_output, "w", encoding="utf-8") as output_json:
         done = 0
         for idx, example in enumerate(target_examples):
